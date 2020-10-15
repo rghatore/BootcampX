@@ -10,19 +10,19 @@ const pool = new Pool({
 });
 
 // getting user input
-const input = process.argv.slice(2);
-console.log(input);
+const input = process.argv[2];
 
-// querying the database
 pool.query(`
-SELECT students.id, students.name AS student_name, cohorts.name AS cohort_name
-FROM students
+SELECT DISTINCT teachers.name as teacher, cohorts.name as cohort
+FROM teachers
+JOIN assistance_requests ON teacher_id = teachers.id
+JOIN students ON student_id = students.id
 JOIN cohorts ON cohort_id = cohorts.id
-WHERE cohorts.name LIKE '%${input[0]}%'
-LIMIT ${input[1] || 5};
+WHERE cohorts.name LIKE '%${input}%'
+ORDER BY teacher;
 `).then(response => {
   // console.log(response.rows);
-  response.rows.forEach(user => {
-    console.log(`${user.student_name} has an id of ${user.id} and was in the ${user.cohort_name} cohort`);
+  response.rows.forEach(item => {
+    console.log(`${item.cohort}: ${item.teacher}`);
   })
 }).catch(err => console.log('query error', err.stack));
