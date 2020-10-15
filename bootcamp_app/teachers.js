@@ -12,15 +12,21 @@ const pool = new Pool({
 // getting user input
 const input = process.argv[2];
 
-pool.query(`
+// setting up query with placeholders
+const queryString = `
 SELECT DISTINCT teachers.name as teacher, cohorts.name as cohort
 FROM teachers
 JOIN assistance_requests ON teacher_id = teachers.id
 JOIN students ON student_id = students.id
 JOIN cohorts ON cohort_id = cohorts.id
-WHERE cohorts.name LIKE '%${input}%'
+WHERE cohorts.name LIKE $1
 ORDER BY teacher;
-`).then(response => {
+`;
+
+// setting up values for placeholders
+const values =[`%${input}%`];
+
+pool.query(queryString, values).then(response => {
   // console.log(response.rows);
   response.rows.forEach(item => {
     console.log(`${item.cohort}: ${item.teacher}`);
