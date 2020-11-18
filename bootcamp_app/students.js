@@ -23,7 +23,7 @@ LIMIT $2;
 `;
 
 // setting up values for placeholders
-const values =[`%${input[0]}%`, `${input[1] || 5}`];
+const values = [`%${input[0]}%`, `${input[1] || 5}`];
 
 // querying the database
 pool.query(queryString, values).then(response => {
